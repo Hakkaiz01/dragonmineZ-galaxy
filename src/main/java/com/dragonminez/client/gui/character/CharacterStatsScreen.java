@@ -11,6 +11,7 @@ import com.dragonminez.common.network.NetworkHandler;
 import com.dragonminez.common.stats.StatsCapability;
 import com.dragonminez.common.stats.StatsData;
 import com.dragonminez.common.stats.StatsProvider;
+import com.dragonminez.common.util.TPNumberFormatter;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -122,7 +123,7 @@ public class CharacterStatsScreen extends BaseMenuScreen {
 		int startY = centerY - 15;
 
 		int maxStats = ConfigManager.getServerConfig().getGameplay().getMaxStatValue();
-		int availableTPs = statsData.getResources().getTrainingPoints();
+		long availableTPs = statsData.getResources().getTrainingPoints();
 		int tpCost = statsData.calculateRecursiveCost(tpMultiplier, maxStats);
 
 		multiplierButton = new CustomTextureButton.Builder()
@@ -296,7 +297,7 @@ public class CharacterStatsScreen extends BaseMenuScreen {
 		drawStringWithBorder(graphics, Component.translatable("gui.dragonminez.character_stats.info").withStyle(style -> style.withBold(true)), 85, titleY, 0xFBC51C, 0x000000);
 
 		int level = statsData.getLevel();
-		int tps = statsData.getResources().getTrainingPoints();
+		long tps = statsData.getResources().getTrainingPoints();
 		String characterClass = statsData.getCharacter().getCharacterClass();
 		String form = statsData.getCharacter().getActiveForm();
 		String stackForm = statsData.getCharacter().getActiveStackForm();
@@ -309,7 +310,7 @@ public class CharacterStatsScreen extends BaseMenuScreen {
 		drawStringWithBorder2(graphics, Component.literal(numberFormatter.format(level)), valueX + 5, startY, 0xFFFFFF, 0x000000);
 
 		drawStringWithBorder2(graphics, Component.translatable("gui.dragonminez.character_stats.tps").withStyle(style -> style.withBold(true)), labelX, startY + 11, 0xD7FEF5, 0x000000);
-		drawStringWithBorder2(graphics, Component.literal(numberFormatter.format(tps)), valueX + 5, startY + 11, 0xFFE593, 0x000000);
+		drawStringWithBorder2(graphics, Component.literal(TPNumberFormatter.format(tps)), valueX + 5, startY + 11, 0xFFE593, 0x000000);
 
 		drawStringWithBorder2(graphics, Component.translatable("gui.dragonminez.character_stats.form").withStyle(style -> style.withBold(true)), labelX, startY + 22, 0xD7FEF5, 0x000000);
 		Component formComponent;

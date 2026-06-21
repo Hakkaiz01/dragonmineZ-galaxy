@@ -101,10 +101,10 @@ public abstract class DMZEvent extends Event {
 	public static class TPGainEvent extends Event {
 
 		private final Player player;
-		private final int oldValue;
-		private int tpGain;
+		private final long oldValue;
+		private long tpGain;
 
-		public TPGainEvent(Player player, int oldValue, int tpGain) {
+		public TPGainEvent(Player player, long oldValue, long tpGain) {
 			this.player = player;
 			this.oldValue = oldValue;
 			this.tpGain = tpGain;
@@ -114,19 +114,19 @@ public abstract class DMZEvent extends Event {
 			return player;
 		}
 
-		public int getOldValue() {
+		public long getOldValue() {
 			return oldValue;
 		}
 
-		public int getTpGain() {
+		public long getTpGain() {
 			return tpGain;
 		}
 
-		public void setTpGain(int tpGain) {
+		public void setTpGain(long tpGain) {
 			this.tpGain = tpGain;
 		}
 
-		public int getNewValue() {
+		public long getNewValue() {
 			return oldValue + tpGain;
 		}
 	}

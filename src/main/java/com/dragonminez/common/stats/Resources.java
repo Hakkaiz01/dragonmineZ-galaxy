@@ -2,6 +2,7 @@ package com.dragonminez.common.stats;
 
 import com.dragonminez.common.events.DMZEvent;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -12,7 +13,7 @@ public class Resources {
     private int release;
     private int actionCharge;
     private int alignment;
-    private int trainingPoints;
+    private long trainingPoints;
     private int racialSkillCount;
     private Player player;
 
@@ -37,7 +38,7 @@ public class Resources {
     public int getPowerRelease() { return release; }
     public int getActionCharge() { return actionCharge; }
     public int getAlignment() { return alignment; }
-    public int getTrainingPoints() { return trainingPoints; }
+    public long getTrainingPoints() { return trainingPoints; }
     public int getRacialSkillCount() { return racialSkillCount; }
 
     public void setCurrentEnergy(int energy) { this.currentEnergy = Math.max(0, energy); }
@@ -46,7 +47,7 @@ public class Resources {
     public void setPowerRelease(int release) { this.release = Math.max(0, release); }
     public void setActionCharge(int actionCharge) { this.actionCharge = Math.max(0, Math.min(100, actionCharge)); }
     public void setAlignment(int alignment) { this.alignment = Math.max(0, Math.min(100, alignment)); }
-    public void setTrainingPoints(int points) { this.trainingPoints = Math.max(0, points); }
+    public void setTrainingPoints(long points) { this.trainingPoints = Math.max(0, points); }
     public void setRacialSkillCount(int count) { this.racialSkillCount = Math.max(0, count); }
 
     public void addEnergy(int amount) { setCurrentEnergy(Math.max(0, currentEnergy + amount)); }
@@ -54,13 +55,13 @@ public class Resources {
 	public void addPoise(int amount) { setCurrentPoise(Math.max(0, currentPoise + amount)); }
     public void addAlignment(int amount) { setAlignment(Math.max(0, alignment + amount)); }
 
-    public void addTrainingPoints(int amount) {
+    public void addTrainingPoints(long amount) {
         if (amount <= 0 || player == null) {
             setTrainingPoints(trainingPoints + amount);
             return;
         }
 
-        int oldValue = this.trainingPoints;
+        long oldValue = this.trainingPoints;
         DMZEvent.TPGainEvent event = new DMZEvent.TPGainEvent(player, oldValue, amount);
 
         if (!MinecraftForge.EVENT_BUS.post(event)) {
@@ -74,7 +75,7 @@ public class Resources {
     public void removeStamina(int amount) { setCurrentStamina(Math.max(0, currentStamina - amount)); }
 	public void removePoise(int amount) { setCurrentPoise(Math.max(0, currentPoise - amount)); }
     public void removeAlignment(int amount) { setAlignment(Math.max(0, alignment - amount)); }
-    public void removeTrainingPoints(int amount) { setTrainingPoints(Math.max(0, trainingPoints - amount)); }
+    public void removeTrainingPoints(long amount) { setTrainingPoints(Math.max(0, trainingPoints - amount)); }
 
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
@@ -84,7 +85,7 @@ public class Resources {
         tag.putInt("Release", release);
         tag.putInt("FormRelease", actionCharge);
         tag.putInt("Alignment", alignment);
-        tag.putInt("TrainingPoints", trainingPoints);
+        tag.putLong("TrainingPoints", trainingPoints);
         tag.putInt("ZenkaiCount", racialSkillCount);
         return tag;
     }
@@ -96,7 +97,9 @@ public class Resources {
         this.release = tag.getInt("Release");
         this.actionCharge = tag.getInt("FormRelease");
         this.alignment = tag.getInt("Alignment");
-        this.trainingPoints = tag.getInt("TrainingPoints");
+        this.trainingPoints = tag.contains("TrainingPoints", Tag.TAG_INT)
+                ? tag.getInt("TrainingPoints")
+                : tag.getLong("TrainingPoints");
         this.racialSkillCount = tag.getInt("ZenkaiCount");
     }
 

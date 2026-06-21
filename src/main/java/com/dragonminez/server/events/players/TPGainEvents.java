@@ -22,17 +22,17 @@ public class TPGainEvents {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onTPGain(DMZEvent.TPGainEvent event) {
         if (event.getPlayer() == null || event.getTpGain() <= 0) return;
-		int baseTP = event.getTpGain();
-		final int[] modifiedTP = {event.getTpGain()};
+		long baseTP = event.getTpGain();
+		final long[] modifiedTP = {event.getTpGain()};
 
         if (event.getPlayer().level().dimension().equals(HTCDimension.HTC_KEY)) {
             double htcMultiplier = ConfigManager.getServerConfig().getGameplay().getHTCTpMultiplier() - 1.0;
-            modifiedTP[0] = (int) (baseTP + baseTP * htcMultiplier);
+            modifiedTP[0] = (long) (baseTP + baseTP * htcMultiplier);
         } else {
 			double bonusGravity = GravityLogic.getBonusGravity(event.getPlayer());
 			if (bonusGravity > 0) {
 				double gravityBonus = 1.0 + (bonusGravity * 0.05);
-				modifiedTP[0] = (int) (baseTP + baseTP * gravityBonus);
+				modifiedTP[0] = (long) (baseTP + baseTP * gravityBonus);
 			}
 		}
 
@@ -43,7 +43,7 @@ public class TPGainEvents {
 					if (partnerUUID != null) {
 						ServerPlayer partner = player.getServer().getPlayerList().getPlayer(partnerUUID);
 						if (partner != null) {
-							int shareAmount = modifiedTP[0] / 2;
+							long shareAmount = modifiedTP[0] / 2;
 							StatsProvider.get(StatsCapability.INSTANCE, partner).ifPresent(pData -> {
 								pData.getResources().addTrainingPoints(shareAmount);
 								NetworkHandler.sendToTrackingEntityAndSelf(new StatsSyncS2C(partner), partner);
@@ -59,14 +59,14 @@ public class TPGainEvents {
 			StatsProvider.get(StatsCapability.INSTANCE, event.getPlayer()).ifPresent(data -> {
 				if (data.getCharacter().getRace().equals("frostdemon")) {
 					double frostDemonMultiplier = ConfigManager.getServerConfig().getRacialSkills().getFrostDemonTPBoost() - 1.0;
-					modifiedTP[0] = (int) (modifiedTP[0] + baseTP * frostDemonMultiplier);
+					modifiedTP[0] = (long) (modifiedTP[0] + baseTP * frostDemonMultiplier);
 				}
 			});
 		}
 
 		// Final multiplier
 		double configMultiplier = ConfigManager.getServerConfig().getGameplay().getTpsGainMultiplier();
-		modifiedTP[0] *= (int) configMultiplier;
+		modifiedTP[0] = (long) (modifiedTP[0] * configMultiplier);
 
         event.setTpGain(modifiedTP[0]);
     }

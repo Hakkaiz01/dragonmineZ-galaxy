@@ -257,7 +257,7 @@ public class SkillsMenuScreen extends BaseMenuScreen {
 		int rightPanelY = centerY - 105;
 
 		int cost = getUpgradeCost(selectedSkill, skill.getLevel());
-		int currentTPS = statsData.getResources().getTrainingPoints();
+		long currentTPS = statsData.getResources().getTrainingPoints();
 		boolean canUpgrade = !skill.isMaxLevel() && currentTPS >= cost;
 		if (cost == -1 || cost == Integer.MAX_VALUE) return;
 

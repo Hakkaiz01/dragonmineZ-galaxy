@@ -57,7 +57,7 @@ public class UpdateSkillC2S {
 						case UPGRADE:
 							if (skill == null) break;
 							refreshRuntimeMaxLevel(data, skillName, skill);
-							if (!skill.isMaxLevel() && data.getResources().getTrainingPoints() >= cost && cost != -1 && !(skillName.equals("potentialunlock") && skill.getLevel() == 10)) {
+							if (!skill.isMaxLevel() && data.getResources().getTrainingPoints() >= (long) cost && cost != -1 && !(skillName.equals("potentialunlock") && skill.getLevel() == 10)) {
 								data.getResources().removeTrainingPoints(cost);
 								skill.addLevel(1);
 							}

@@ -49,7 +49,7 @@ public class IncreaseStatC2S {
 
 				if (currentStat >= maxStats) return;
 
-				int availableTPs = data.getResources().getTrainingPoints();
+				long availableTPs = data.getResources().getTrainingPoints();
 				if (availableTPs <= 0) return;
 
 				int statsCanIncrease = Math.min(msg.multiplier, maxStats - currentStat);

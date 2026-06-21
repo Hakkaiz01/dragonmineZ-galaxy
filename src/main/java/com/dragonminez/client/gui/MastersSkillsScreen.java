@@ -210,7 +210,7 @@ public class MastersSkillsScreen extends BaseMenuScreen {
 
 		if (!statsData.getSkills().hasSkill(selectedSkill) || skill.getLevel() == 0) {
 			int cost = getUpgradeCost(selectedSkill, 0);
-			int currentTPS = statsData.getResources().getTrainingPoints();
+			long currentTPS = statsData.getResources().getTrainingPoints();
 			boolean canAfford = currentTPS >= cost;
 			if (cost == -1 || cost == Integer.MAX_VALUE) return;
 
