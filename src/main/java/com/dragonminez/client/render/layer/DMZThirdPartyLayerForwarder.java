@@ -17,7 +17,6 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -44,8 +43,8 @@ public class DMZThirdPartyLayerForwarder<T extends AbstractClientPlayer & GeoAni
 
 	@Override
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if (!"body".equals(bone.getName())) return;
+	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+		if (animatable.isSpectator()) return;
 
 		var dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
 		var vanillaRenderer = dispatcher.getSkinMap().get(animatable.getModelName());
@@ -57,13 +56,14 @@ public class DMZThirdPartyLayerForwarder<T extends AbstractClientPlayer & GeoAni
 		} catch (Exception e) {
 			return;
 		}
-
 		if (layers == null || layers.isEmpty()) return;
 
 		BakedGeoModel geoModel = this.getRenderer().getGeoModel().getBakedModel(this.getRenderer().getGeoModel().getModelResource(animatable));
 		PlayerModel<AbstractClientPlayer> vanillaModel = playerRenderer.getModel();
 
-		if (geoModel != null) VanillaModelSync.sync(geoModel, vanillaModel, animatable);
+		if (geoModel != null) {
+			VanillaModelSync.sync(geoModel, vanillaModel, animatable);
+		}
 		vanillaModel.attackTime = animatable.getAttackAnim(partialTick);
 		vanillaModel.riding = animatable.isPassenger();
 		vanillaModel.young = false;
@@ -75,28 +75,6 @@ public class DMZThirdPartyLayerForwarder<T extends AbstractClientPlayer & GeoAni
 		float limbSwing = animatable.walkAnimation.position(partialTick);
 		float limbSwingAmount = animatable.walkAnimation.speed(partialTick);
 		float ageInTicks = animatable.tickCount + partialTick;
-
-		poseStack.pushPose();
-
-		if (geoModel != null)
-			geoModel.getBone("waist").ifPresent(waistBone -> RenderUtils.translateToPivotPoint(poseStack, waistBone));
-
-		poseStack.scale(-1.0F, -1.0F, 1.0F);
-		poseStack.translate(0.0F, -0.75F, 0.0F);
-
-		float oldBodyX = vanillaModel.body.xRot;
-		float oldBodyY = vanillaModel.body.yRot;
-		float oldBodyZ = vanillaModel.body.zRot;
-		vanillaModel.body.xRot = 0.0F;
-		vanillaModel.body.yRot = 0.0F;
-		vanillaModel.body.zRot = 0.0F;
-
-		float oldHeadX = vanillaModel.head.xRot;
-		float oldHeadY = vanillaModel.head.yRot;
-		float oldHeadZ = vanillaModel.head.zRot;
-		vanillaModel.head.xRot = 0.0F;
-		vanillaModel.head.yRot = 0.0F;
-		vanillaModel.head.zRot = 0.0F;
 
 		for (RenderLayer layer : layers) {
 			Class<?> layerClass = layer.getClass();
@@ -117,15 +95,5 @@ public class DMZThirdPartyLayerForwarder<T extends AbstractClientPlayer & GeoAni
 			}
 			poseStack.popPose();
 		}
-
-		vanillaModel.body.xRot = oldBodyX;
-		vanillaModel.body.yRot = oldBodyY;
-		vanillaModel.body.zRot = oldBodyZ;
-		vanillaModel.head.xRot = oldHeadX;
-		vanillaModel.head.yRot = oldHeadY;
-		vanillaModel.head.zRot = oldHeadZ;
-
-		poseStack.popPose();
 	}
 }
-

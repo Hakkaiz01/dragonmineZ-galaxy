@@ -139,7 +139,7 @@ public class ForgeCommonEvents {
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			StatsProvider.get(StatsCapability.INSTANCE, player).ifPresent(data -> {
-				if (!data.getStatus().isAlive()) {
+				if (!data.getStatus().isAlive() && ConfigManager.getServerConfig().getWorldGen().getOtherworldActive()) {
 					ServerLevel otherworld = player.getServer().getLevel(OtherworldDimension.OTHERWORLD_KEY);
 					player.teleportTo(otherworld, 0, 41, 10, 0, 0);
 				}
